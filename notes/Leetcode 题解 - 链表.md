@@ -62,7 +62,8 @@ public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
     return l1;
 }
 ```
-```暴力破解
+暴力破解
+```java
 public class Solution { 
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         int lengthA = 0; int lengthB = 0;
@@ -551,16 +552,6 @@ public ListNode oddEvenList(ListNode head) {
 ```
 
 ```java
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
 class Solution {
     public ListNode oddEvenList(ListNode head) {
         if(head==null || head.next==null)return head;
