@@ -62,6 +62,63 @@ public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
     return l1;
 }
 ```
+暴力破解
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution { 
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int lengthA = 0; int lengthB = 0;
+        ListNode tempA = headA; ListNode tempB = headB;
+        while(tempA!=null){
+            lengthA++;
+            tempA = tempA.next;
+        }
+        while(tempB!=null){
+            lengthB++;
+            tempB = tempB.next;
+        }
+        int step = Math.abs(lengthB-lengthA);
+        tempA = headA; tempB = headB;
+        if(lengthB> lengthA){
+            for(int i=0;i<step;i++){
+                tempB = tempB.next;
+            }
+            
+            for(int i=0;i<lengthB-step;i++){
+                if(tempA!=tempB){
+                    tempA = tempA.next; tempB = tempB.next;
+                    continue;
+                }else{
+                    return tempB;
+                }
+            }
+        }else{
+              for(int i=0;i<step;i++){
+                tempA = tempA.next;
+            }
+            for(int i=0;i<lengthA-step;i++){
+                if(tempA!=tempB){
+                    tempA = tempA.next; tempB = tempB.next;
+                    continue;
+                }else{
+                    return tempB;
+                }
+            }
+        }
+        return null;
+    }
+}
+```
 
 如果只是判断是否存在交点，那么就是另一个问题，即 [编程之美 3.6]() 的问题。有两种解法：
 
