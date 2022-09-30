@@ -62,6 +62,51 @@ public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
     return l1;
 }
 ```
+```暴力破解
+public class Solution { 
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int lengthA = 0; int lengthB = 0;
+        ListNode tempA = headA; ListNode tempB = headB;
+        while(tempA!=null){
+            lengthA++;
+            tempA = tempA.next;
+        }
+        while(tempB!=null){
+            lengthB++;
+            tempB = tempB.next;
+        }
+        int step = Math.abs(lengthB-lengthA);
+        tempA = headA; tempB = headB;
+        if(lengthB> lengthA){
+            for(int i=0;i<step;i++){
+                tempB = tempB.next;
+            }
+            
+            for(int i=0;i<lengthB-step;i++){
+                if(tempA!=tempB){
+                    tempA = tempA.next; tempB = tempB.next;
+                    continue;
+                }else{
+                    return tempB;
+                }
+            }
+        }else{
+              for(int i=0;i<step;i++){
+                tempA = tempA.next;
+            }
+            for(int i=0;i<lengthA-step;i++){
+                if(tempA!=tempB){
+                    tempA = tempA.next; tempB = tempB.next;
+                    continue;
+                }else{
+                    return tempB;
+                }
+            }
+        }
+        return null;
+    }
+}
+···
 
 如果只是判断是否存在交点，那么就是另一个问题，即 [编程之美 3.6]() 的问题。有两种解法：
 
@@ -103,7 +148,22 @@ public ListNode reverseList(ListNode head) {
     return newHead.next;
 }
 ```
-
+```java
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head==null || head.next==null)return head;
+        ListNode pre = null;
+        ListNode temp = null;
+        while(head!=null){
+            temp = head.next;
+            head.next = pre;
+            pre = head;
+            head = temp;
+        }
+        return pre;
+    }
+}
+```
 ##  3. 归并两个有序的链表
 
 21\. Merge Two Sorted Lists (Easy)
@@ -120,6 +180,34 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
     } else {
         l2.next = mergeTwoLists(l1, l2.next);
         return l2;
+    }
+}
+```
+
+```java
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        ListNode temp = new ListNode(-1);
+        ListNode list = temp;
+        while(list1!=null && list2!=null){
+            if(list1.val <= list2.val){
+                list.next = new ListNode(list1.val);
+                list1 = list1.next;
+            }else{
+                list.next = new ListNode(list2.val);
+                list2 = list2.next; 
+            }
+            list = list.next;
+        }
+        while(list1!=null){
+            list.next = new ListNode(list1.val);
+            list1 = list1.next; list = list.next;
+        }
+        while(list2!=null){
+            list.next = new ListNode(list2.val);
+            list2 = list2.next; list = list.next;
+        }
+        return temp.next;
     }
 }
 ```
@@ -170,7 +258,24 @@ public ListNode removeNthFromEnd(ListNode head, int n) {
     return head;
 }
 ```
-
+```java
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummyHead = new ListNode(-1,head);
+        ListNode fast = dummyHead;
+        ListNode slow = dummyHead;
+        for(int i=0;i<=n;i++){
+            fast = fast.next;
+        }
+        while(fast!=null){
+            fast = fast.next;
+            slow = slow.next;
+        }
+        slow.next = slow.next.next;
+        return dummyHead.next;
+    }
+}
+```
 ##  6. 交换链表中的相邻结点
 
 24\. Swap Nodes in Pairs (Medium)
@@ -200,6 +305,29 @@ public ListNode swapPairs(ListNode head) {
     return node.next;
 }
 ```
+```java
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if(head==null || head.next==null)return head;
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode cur = head;
+        ListNode pre = dummy;
+        ListNode temp = null;
+        
+        while(cur!=null && cur.next!=null){
+            temp = cur.next.next;
+            pre.next = cur.next;
+            cur.next.next = cur;
+            cur.next = temp;
+            pre = cur;
+            cur = cur.next;
+        }
+        return dummy.next;
+
+    }
+}
+```
 
 ##  7. 链表求和
 
@@ -215,21 +343,33 @@ Output: 7 -> 8 -> 0 -> 7
 题目要求：不能修改原始链表。
 
 ```java
-public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
     Stack<Integer> l1Stack = buildStack(l1);
     Stack<Integer> l2Stack = buildStack(l2);
-    ListNode head = new ListNode(-1);
+    ListNode ans = null;
     int carry = 0;
     while (!l1Stack.isEmpty() || !l2Stack.isEmpty() || carry != 0) {
         int x = l1Stack.isEmpty() ? 0 : l1Stack.pop();
         int y = l2Stack.isEmpty() ? 0 : l2Stack.pop();
         int sum = x + y + carry;
-        ListNode node = new ListNode(sum % 10);
-        node.next = head.next;
-        head.next = node;
         carry = sum / 10;
+        ListNode node = new ListNode(sum % 10);
+        node.next = ans;
+        ans = node;
+        
     }
-    return head.next;
+    return ans;
 }
 
 private Stack<Integer> buildStack(ListNode l) {
@@ -239,6 +379,7 @@ private Stack<Integer> buildStack(ListNode l) {
         l = l.next;
     }
     return stack;
+}
 }
 ```
 
@@ -334,7 +475,52 @@ public ListNode[] splitListToParts(ListNode root, int k) {
     return ret;
 }
 ```
-
+```java
+class Solution {
+    public ListNode[] splitListToParts(ListNode head, int k) {
+        int[] res = new int[k];
+        ListNode[] list = new ListNode[k];
+        ListNode p = head;
+        int length = 0;
+        while(p!=null){
+            length++;
+            p = p.next;
+        }
+        if(length<=k){
+            for(int i=0;i<length;i++){
+                res[i]  =1;
+            }
+        }else{
+            int a = length/k;
+            int b = length%k;
+            for(int i=0;i<k;i++){
+                res[i] = a;
+                if(b>0){
+                    res[i]+=1;
+                b-=1;
+                }
+                
+            }
+        }
+        ListNode dummy;
+        ListNode temp = head;
+        ListNode temp2 = null;
+        for(int i=0;i<k;i++){
+            dummy = temp;
+            int num = res[i];
+            for(int j=0;j<num-1;j++){
+                temp = temp.next;
+            }
+            if(temp==null)break;
+            temp2 = temp.next;
+            temp.next = null;
+            list[i] = dummy;
+            temp = temp2;
+        }
+        return list;
+    }
+}
+```
 ##  10. 链表元素按奇偶聚集
 
 328\. Odd Even Linked List (Medium)
@@ -361,5 +547,47 @@ public ListNode oddEvenList(ListNode head) {
     }
     odd.next = evenHead;
     return head;
+}
+```
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode oddEvenList(ListNode head) {
+        if(head==null || head.next==null)return head;
+        ListNode p = head; ListNode temp_p = p;
+        ListNode q = head.next; ListNode temp_q = q;
+        ListNode res = new ListNode(-1);
+        ListNode temp = head;
+        int index = 1;
+        while(p!=null && q!=null){
+            if(p.next!=null){
+                p.next = p.next.next;
+                p = p.next;
+            }
+            if(q.next!=null){
+                q.next = q.next.next;
+                q = q.next;
+            }
+            
+        }
+        p = temp_p;
+        while(p.next!=null){
+            p = p.next;
+        }
+        p.next = temp_q;
+        res.next = temp_p;
+        return res.next;
+        
+    }
 }
 ```
