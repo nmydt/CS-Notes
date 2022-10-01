@@ -344,16 +344,6 @@ Output: 7 -> 8 -> 0 -> 7
 题目要求：不能修改原始链表。
 
 ```java
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
 class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
     Stack<Integer> l1Stack = buildStack(l1);
@@ -381,6 +371,46 @@ private Stack<Integer> buildStack(ListNode l) {
     }
     return stack;
 }
+}
+```
+```java
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Stack<Integer> stack1 = new Stack<Integer>();
+        Stack<Integer> stack2 = new Stack<Integer>();
+
+        ListNode p1 = l1; ListNode p2 = l2;
+        while(p1!=null){
+            stack1.push(p1.val);
+            p1 = p1.next;
+        }
+        while(p2!=null){
+            stack2.push(p2.val);
+            p2 = p2.next;
+        }
+        int ans = 0; // 进位
+        ListNode dummy = new  ListNode(-1);
+        ListNode next_node = null;
+        while(!stack1.isEmpty() || !stack2.isEmpty()){
+            int a = stack1.isEmpty()?0:stack1.pop();
+            int b = stack2.isEmpty()?0:stack2.pop();
+            int sum = a + b + ans;
+            ans = sum/10;
+            int x = sum%10;
+            ListNode node = new ListNode(x);
+            dummy.next = node;
+            node.next = next_node;
+            next_node = node;
+            
+        }
+        if(ans!=0){
+            ListNode node = new ListNode(ans);
+            dummy.next = node;
+            node.next = next_node;
+            next_node = node;
+        }
+        return dummy.next;
+    }
 }
 ```
 
