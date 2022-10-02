@@ -140,7 +140,25 @@ public TreeNode invertTree(TreeNode root) {
     return root;
 }
 ```
-
+个人解法
+```java
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if(root==null)return root;
+        reverse(root);
+        return root;
+        
+    }
+    public void reverse(TreeNode root){
+        if(root== null)return;
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        reverse(root.left);
+        reverse(root.right);
+    }
+}
+```
 ### 5. 归并两棵树
 
 617\. Merge Two Binary Trees (Easy)
@@ -175,6 +193,32 @@ public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
     return root;
 }
 ```
+个人解法
+```java
+class Solution {
+    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {
+        if(root1==null)return root2;
+        if(root2==null)return root1;
+        merge(root1, root2);   
+        return root2;
+    }
+    public void merge(TreeNode root1,TreeNode root2){
+        if(root1==null || root2==null)return;
+        
+        if(root2.left==null){
+            root2.left = root1.left;
+            root1.left = null;
+        }
+        if(root2.right==null){
+            root2.right = root1.right;
+            root1.right = null;
+        }
+        root2.val+=root1.val;
+        merge(root1.left,root2.left);
+        merge(root1.right,root2.right);
+    }
+}
+```
 
 ### 6. 判断路径和是否等于一个数
 
@@ -203,6 +247,27 @@ public boolean hasPathSum(TreeNode root, int sum) {
     if (root == null) return false;
     if (root.left == null && root.right == null && root.val == sum) return true;
     return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+}
+```
+个人解法
+```java
+class Solution {
+    public int sum = 0;
+    public boolean result = false;
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if(root==null)return false;
+        hasPath(root,targetSum);
+        return result;
+    }
+     public void hasPath(TreeNode root, int targetSum) {
+        if(root==null)return;
+        sum+=root.val;
+        //等于targetSum且是叶子结点
+        if(sum==targetSum && root.left==null && root.right==null)result = true;
+        hasPathSum(root.left,targetSum);
+        hasPathSum(root.right,targetSum);
+        sum-=root.val;
+     }
 }
 ```
 
@@ -245,6 +310,31 @@ private int pathSumStartWithRoot(TreeNode root, int sum) {
     if (root.val == sum) ret++;
     ret += pathSumStartWithRoot(root.left, sum - root.val) + pathSumStartWithRoot(root.right, sum - root.val);
     return ret;
+}
+```
+
+```java
+class Solution {
+    public Long sum = 0l;
+    public int result = 0;
+    public int pathSum(TreeNode root, int targetSum) {
+        if(root==null)return 0;
+        //根
+        path(root,targetSum);
+        //左
+        pathSum(root.left,targetSum);
+        //右
+        pathSum(root.right,targetSum);
+        return result;
+    }
+    public void path(TreeNode root, int targetSum){
+        if(root==null)return;
+        sum+=root.val;
+        if(sum==targetSum)result++;
+        path(root.left,targetSum);
+        path(root.right,targetSum);
+        sum-=root.val;
+    }
 }
 ```
 
@@ -298,6 +388,28 @@ private boolean isSubtreeWithRoot(TreeNode s, TreeNode t) {
     if (t == null || s == null) return false;
     if (t.val != s.val) return false;
     return isSubtreeWithRoot(s.left, t.left) && isSubtreeWithRoot(s.right, t.right);
+}
+```
+个人解法
+```java
+class Solution {
+    public boolean result = false;
+    public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+        if(root==null)return false;
+        if(root.val==subRoot.val){
+            if(isSame(root,subRoot)){
+                result = true;
+            }
+        }
+        isSubtree(root.left,subRoot); isSubtree(root.right,subRoot);
+        return result;
+    }
+    public boolean isSame(TreeNode p,TreeNode q){
+        if(p==null)return q==null;
+        if(q==null)return p==null;
+        if(p.val!=q.val)return false;
+        return isSame(p.left,q.left) && isSame(p.right,q.right);
+    }
 }
 ```
 
@@ -472,6 +584,27 @@ public int findSecondMinimumValue(TreeNode root) {
     if (leftVal != -1 && rightVal != -1) return Math.min(leftVal, rightVal);
     if (leftVal != -1) return leftVal;
     return rightVal;
+}
+```
+```java
+class Solution {
+    int min=Integer.MAX_VALUE;
+    static long MAX = Long.valueOf(Integer.MAX_VALUE)+1l;
+    long res = MAX;
+    public int findSecondMinimumValue(TreeNode root) {
+        if(root==null)return -1;
+        if(min==Integer.MAX_VALUE)min = root.val;
+        if(root.val!=min){
+            res = Math.min(res,root.val);
+        }
+        findSecondMinimumValue(root.left);
+        findSecondMinimumValue(root.right);
+        if(res==MAX){
+            return -1;
+        }else{
+            return (int)res;
+        }
+    }
 }
 ```
 
